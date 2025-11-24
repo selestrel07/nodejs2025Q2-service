@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { User } from './interfaces/user.interface';
+import { User } from './dto/user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class UserService {
@@ -11,6 +13,27 @@ export class UserService {
 
   getById(id: string): User | undefined {
     const user = this.users.find((u) => u.id === id);
+    return user;
+  }
+
+  create(userCreateDto: CreateUserDto): User {
+    if (this.users.find((u) => u.login === userCreateDto.login)) {
+      throw new Error('User already exists');
+    }
+    let id = '';
+    const timestamp = Date.now();
+    while (id.length === 0 || this.users.find((u) => u.id === id) !== undefined) {
+      id = randomUUID();
+    }
+    const user: User = new User({
+      id,
+      login: userCreateDto.login,
+      password: userCreateDto.password,
+      version: 1,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    });
+    this.users.push(user);
     return user;
   }
 }
