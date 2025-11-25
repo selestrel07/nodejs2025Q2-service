@@ -43,4 +43,12 @@ export class ArtistService {
     artist.grammy = updateArtistDto.grammy ?? artist.grammy;
     return artist;
   }
+
+  remove(id: string): void {
+    const artist = this.findById(id);
+    if (!artist) {
+      throwNotFoundException(id, 'Artist');
+    }
+    this.artists.splice(this.artists.indexOf(artist), 1);
+  }
 }

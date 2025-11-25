@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { Artist } from './dto/artist.dto';
 import { PathParameters } from 'src/interfaces/path-params';
@@ -32,5 +32,12 @@ export class ArtistController {
   update(@Body() body: CreateArtistDto, @Param() params: PathParameters) {
     validateId(params.id);
     return this.artistService.update(params.id, body);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  remove(@Param() params: PathParameters) {
+    validateId(params.id);
+    this.artistService.remove(params.id);
   }
 }
