@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { randomUUID } from 'crypto';
+import { UpdatePasswordDto } from './dto/user-update-password.dto';
 
 @Injectable()
 export class UserService {
@@ -11,14 +12,17 @@ export class UserService {
     return this.users;
   }
 
-  getById(id: string): User | undefined {
+  getById(id: string): User {
     const user = this.users.find((u) => u.id === id);
+    if (!user) {
+      throw new HttpException(`User with id '${id}' was not found`, HttpStatus.NOT_FOUND);
+    }
     return user;
   }
 
   create(userCreateDto: CreateUserDto): User {
     if (this.users.find((u) => u.login === userCreateDto.login)) {
-      throw new Error('User already exists');
+      throw new HttpException(`User ${userCreateDto.login} already exists`, HttpStatus.BAD_REQUEST);
     }
     let id = '';
     const timestamp = Date.now();
@@ -34,6 +38,20 @@ export class UserService {
       updatedAt: timestamp,
     });
     this.users.push(user);
+    return user;
+  }
+
+  updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
+    const user = this.getById(id);
+    if (!user) {
+      throw new HttpException(`User with id '${id}' was not found`, HttpStatus.NOT_FOUND);
+    }
+    if (user.password !== updatePasswordDto.oldPassword || updatePasswordDto.newPassword.length === 0) {
+      throw new HttpException(`Wrong data was provided`, HttpStatus.FORBIDDEN);
+    }
+    user.password = updatePasswordDto.newPassword;
+    user.version = user.version + 1;
+    user.updatedAt = Date.now();
     return user;
   }
 }

@@ -1,9 +1,10 @@
-import { Controller, Get, Param, HttpException, HttpStatus, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, HttpException, HttpStatus, Post, Body, Put } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './dto/user.dto';
-import { validate } from 'uuid';
 import { PathParameters } from 'src/interfaces/path-params';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdatePasswordDto } from './dto/user-update-password.dto';
+import { validateId } from 'src/utils/validateId';
 
 @Controller('user')
 export class UserController {
@@ -16,13 +17,8 @@ export class UserController {
 
   @Get(':id')
   getById(@Param() params: PathParameters): User {
-    if (!validate(params.id)) {
-      throw new HttpException(`'${params.id}' is not a valid UUID`, HttpStatus.BAD_REQUEST);
-    }
+    validateId(params.id);
     const user = this.userService.getById(params.id);
-    if (!user) {
-      throw new HttpException(`User with id '${params.id}' was not found`, HttpStatus.NOT_FOUND);
-    }
     return user;
   }
 
@@ -31,11 +27,12 @@ export class UserController {
     if (!('login' in body && 'password' in body) || body.login.length === 0 || body.password.length === 0) {
       throw new HttpException(`Request body does not contain all required fields (login, password) or some field is empty`, HttpStatus.BAD_REQUEST);
     }
-    try {
-      const user = this.userService.create(body);
-      return user;
-    } catch {
-      throw new HttpException(`User ${body.login} already exists`, HttpStatus.BAD_REQUEST);
-    }
+    return this.userService.create(body);
+  }
+
+  @Put(':id')
+  updatePassword(@Body() body: UpdatePasswordDto, @Param() params: PathParameters): User {
+    validateId(params.id);
+    return this.userService.updatePassword(params.id, body);
   }
 }
