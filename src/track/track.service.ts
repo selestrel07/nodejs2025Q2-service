@@ -35,4 +35,13 @@ export class TrackService {
     this.tracks.push(track);
     return track;
   }
+
+  update(id: string, updateTrackDto: CreateTrackDto): Track {
+    const track = this.findById(id);
+    track.name = updateTrackDto.name ?? track.name;
+    track.artistId = updateTrackDto.artistId ?? track. artistId;
+    track.albumId = updateTrackDto.albumId ?? track.albumId;
+    track.duration = updateTrackDto.duration ?? track.duration;
+    return track;
+  }
 }

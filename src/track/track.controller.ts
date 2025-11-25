@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { Track } from './dto/track.dto';
 import { PathParameters } from 'src/interfaces/path-params';
@@ -26,5 +26,11 @@ export class TrackController {
       throw new HttpException('Request body does not contain all required fields (name, duration) or some field is empty or has wrong data type', HttpStatus.BAD_REQUEST);
     }
     return this.trackService.create(body);
+  }
+
+  @Put(':id')
+  update(@Param() params: PathParameters, @Body() body: CreateTrackDto) {
+    validateId(params.id);
+    return this.trackService.update(params.id, body);
   }
 }
