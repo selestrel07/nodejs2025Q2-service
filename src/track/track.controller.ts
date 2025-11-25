@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { Track } from './dto/track.dto';
 import { PathParameters } from 'src/interfaces/path-params';
@@ -29,8 +29,15 @@ export class TrackController {
   }
 
   @Put(':id')
-  update(@Param() params: PathParameters, @Body() body: CreateTrackDto) {
+  update(@Param() params: PathParameters, @Body() body: CreateTrackDto): Track {
     validateId(params.id);
     return this.trackService.update(params.id, body);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  remove(@Param() params: PathParameters): void {
+    validateId(params.id);
+    this.trackService.remove(params.id);
   }
 }

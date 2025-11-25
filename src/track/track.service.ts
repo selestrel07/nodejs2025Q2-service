@@ -44,4 +44,9 @@ export class TrackService {
     track.duration = updateTrackDto.duration ?? track.duration;
     return track;
   }
+
+  remove(id: string): void {
+    const track = this.findById(id);
+    this.tracks.splice(this.tracks.indexOf(track), 1);
+  }
 }
