@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Artist } from './dto/artist.dto';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { randomUUID } from 'crypto';
+import { throwNotFoundException } from 'src/utils/throw-exceprion';
 
 @Injectable()
 export class ArtistService {
@@ -14,7 +15,7 @@ export class ArtistService {
   findById(id: string): Artist {
     const artist = this.artists.find((a) => a.id === id);
     if (!artist) {
-      throw new HttpException(`Artist with id '${id}' was not found`, HttpStatus.NOT_FOUND);
+      throwNotFoundException(id, 'Artist');
     }
     return artist;
   }
@@ -30,6 +31,16 @@ export class ArtistService {
       grammy: createArtistDto.grammy,
     });
     this.artists.push(artist);
+    return artist;
+  }
+
+  update(id: string, updateArtistDto: CreateArtistDto): Artist {
+    const artist = this.artists.find((a) => a.id === id);
+    if (!artist) {
+      throwNotFoundException(id, 'Artist');
+    }
+    artist.name = updateArtistDto.name ?? artist.name;
+    artist.grammy = updateArtistDto.grammy ?? artist.grammy;
     return artist;
   }
 }

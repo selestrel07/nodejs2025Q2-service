@@ -3,6 +3,7 @@ import { User } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { randomUUID } from 'crypto';
 import { UpdatePasswordDto } from './dto/user-update-password.dto';
+import { throwNotFoundException } from 'src/utils/throw-exceprion';
 
 @Injectable()
 export class UserService {
@@ -15,7 +16,7 @@ export class UserService {
   getById(id: string): User {
     const user = this.users.find((u) => u.id === id);
     if (!user) {
-      throw new HttpException(`User with id '${id}' was not found`, HttpStatus.NOT_FOUND);
+      throwNotFoundException(id, 'User');
     }
     return user;
   }
@@ -44,7 +45,7 @@ export class UserService {
   updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
     const user = this.getById(id);
     if (!user) {
-      throw new HttpException(`User with id '${id}' was not found`, HttpStatus.NOT_FOUND);
+      throwNotFoundException(id, 'User');
     }
     if (user.password !== updatePasswordDto.oldPassword || updatePasswordDto.newPassword.length === 0) {
       throw new HttpException(`Wrong data was provided`, HttpStatus.FORBIDDEN);
@@ -58,7 +59,7 @@ export class UserService {
   remove(id: string): void {
     const user = this.getById(id);
     if (!user) {
-      throw new HttpException(`User with id '${id}' was not found`, HttpStatus.NOT_FOUND);
+      throwNotFoundException(id, 'User');
     }
     this.users.splice(this.users.indexOf(user), 1);
   }
