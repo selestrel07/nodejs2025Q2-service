@@ -54,4 +54,12 @@ export class UserService {
     user.updatedAt = Date.now();
     return user;
   }
+
+  remove(id: string): void {
+    const user = this.getById(id);
+    if (!user) {
+      throw new HttpException(`User with id '${id}' was not found`, HttpStatus.NOT_FOUND);
+    }
+    this.users.splice(this.users.indexOf(user), 1);
+  }
 }
