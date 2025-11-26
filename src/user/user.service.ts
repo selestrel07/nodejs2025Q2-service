@@ -3,7 +3,7 @@ import { User } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { randomUUID } from 'crypto';
 import { UpdatePasswordDto } from './dto/user-update-password.dto';
-import { throwNotFoundException } from 'src/utils/throw-exceprion';
+import { throwNotFoundException } from 'src/utils/throw-exception';
 
 @Injectable()
 export class UserService {

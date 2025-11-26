@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Track } from './dto/track.dto';
-import { throwNotFoundException } from 'src/utils/throw-exceprion';
+import { throwNotFoundException } from 'src/utils/throw-exception';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { randomUUID } from 'crypto';
 

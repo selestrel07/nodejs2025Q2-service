@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Album } from './dto/album.dto';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { randomUUID } from 'crypto';
-import { throwNotFoundException } from 'src/utils/throw-exceprion';
+import { throwNotFoundException } from 'src/utils/throw-exception';
 
 @Injectable()
 export class AlbumService {

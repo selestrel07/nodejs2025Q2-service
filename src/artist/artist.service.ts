@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Artist } from './dto/artist.dto';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { randomUUID } from 'crypto';
-import { throwNotFoundException } from 'src/utils/throw-exceprion';
+import { throwNotFoundException } from 'src/utils/throw-exception';
 
 @Injectable()
 export class ArtistService {
