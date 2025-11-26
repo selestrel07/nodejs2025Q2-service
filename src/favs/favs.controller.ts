@@ -1,4 +1,4 @@
-import { Controller, Get, Post, HttpCode, Param } from '@nestjs/common';
+import { Controller, Get, Post, HttpCode, Param, Delete } from '@nestjs/common';
 import { ArtistService } from 'src/artist/artist.service';
 import { AlbumService } from 'src/album/album.service';
 import { TrackService } from 'src/track/track.service';
@@ -21,20 +21,39 @@ export class FavsController {
   }
 
   @Post(':type(artist|album|track)/:id')
-  @HttpCode(201)
-  addToFavorite(@Param('id') id: string, @Param('type') type: string): void {
+  addToFavorites(@Param('id') id: string, @Param('type') type: string): void {
     validateId(id);
     switch(type) {
       case 'artist': {
-        this.artistService.addToFavorite(id);
+        this.artistService.addToFavorites(id);
         break;
       };
       case 'album': {
-        this.albumService.addToFavorite(id);
+        this.albumService.addToFavorites(id);
         break;
       };
       case 'track': {
-        this.trackService.addToFavorite(id);
+        this.trackService.addToFavorites(id);
+        break;
+      };
+    }
+  }
+
+  @Delete(':type(artist|album|track)/:id')
+  @HttpCode(204)
+  removeFromFavorites(@Param('id') id: string, @Param('type') type: string): void {
+    validateId(id);
+    switch(type) {
+      case 'artist': {
+        this.artistService.removeFromFavorites(id);
+        break;
+      };
+      case 'album': {
+        this.albumService.removeFromFavorites(id);
+        break;
+      };
+      case 'track': {
+        this.trackService.removeFromFavorites(id);
         break;
       };
     }

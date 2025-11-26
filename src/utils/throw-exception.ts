@@ -12,3 +12,7 @@ export const throwDtoBadRequestException = (fields: string[]): never => {
 export const throwUnprocessableEntityException = (id: string, entity: string): never => {
   throw new HttpException(`${entity} with id ${id} was not found`, HttpStatus.UNPROCESSABLE_ENTITY);
 }
+
+export const throwFavoriteNotFoundException = (id: string, entity: string): never => {
+  throw new HttpException(`${entity} with id ${id} was not found in favorite ${entity.toLowerCase()}s`, HttpStatus.NOT_FOUND);
+}
