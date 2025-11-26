@@ -3,6 +3,7 @@ import { Album } from './dto/album.dto';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { randomUUID } from 'crypto';
 import { throwNotFoundException } from 'src/utils/throw-exception';
+import { isString } from 'class-validator';
 
 @Injectable()
 export class AlbumService {
@@ -32,6 +33,16 @@ export class AlbumService {
       artistId: createAlbumDto.artistId ?? null,
     });
     this.albums.push(album);
+    return album;
+  }
+
+  update(id: string, updateAlbumDto: CreateAlbumDto): Album {
+    const album = this.findById(id);
+    album.name = updateAlbumDto.name;
+    album.year = updateAlbumDto.year;
+    if (isString(updateAlbumDto.artistId) || updateAlbumDto.artistId === null) {
+      album.artistId = updateAlbumDto.artistId;
+    }
     return album;
   }
 }

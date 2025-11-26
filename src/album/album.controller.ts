@@ -1,10 +1,10 @@
-import { Body, Controller, Get, HttpException, Post, HttpStatus, Param } from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, Put } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { Album } from './dto/album.dto';
 import { CreateAlbumDto } from './dto/create-album.dto';
-import { isInt, isString } from 'class-validator';
 import { PathParameters } from 'src/interfaces/path-params';
 import { validateId } from 'src/utils/validateId';
+import { validateCreateAlbumDto } from 'src/utils/dto-validation';
 
 @Controller('album')
 export class AlbumController {
@@ -23,11 +23,14 @@ export class AlbumController {
 
   @Post()
   create(@Body() body: CreateAlbumDto) {
-    if (!('name' in body && 'year' in body)
-      || !(isString(body.name) && body.name.length !== 0 &&  isInt(body.year)
-        && body.year > 0 && body.year <= new Date().getFullYear())) {
-          throw new HttpException('Request body does not contain all required fields (name, year) or some field value is wrong or has wrong data type', HttpStatus.BAD_REQUEST);
-    }
+    validateCreateAlbumDto(body);
     return this.albumService.create(body);
+  }
+
+  @Put(':id')
+  update(@Param() params: PathParameters, @Body() body: CreateAlbumDto) {
+    validateId(params.id);
+    validateCreateAlbumDto(body);
+    return this.albumService.update(params.id, body);
   }
 }
