@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Album } from './dto/album.dto';
+import { CreateAlbumDto } from './dto/create-album.dto';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AlbumService {
@@ -7,5 +9,20 @@ export class AlbumService {
 
   findAll(): Album[] {
     return this.albums;
+  }
+
+  create(createAlbumDto: CreateAlbumDto): Album {
+    let id = '';
+    while (id.length === 0 || this.albums.find((a) => a.id === id) !== undefined) {
+      id = randomUUID();
+    }
+    const album = new Album({
+      id,
+      name: createAlbumDto.name,
+      year: createAlbumDto.year,
+      artistId: createAlbumDto.artistId ?? null,
+    });
+    this.albums.push(album);
+    return album;
   }
 }
