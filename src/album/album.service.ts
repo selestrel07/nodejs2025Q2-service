@@ -45,4 +45,9 @@ export class AlbumService {
     }
     return album;
   }
+
+  remove(id: string): void {
+    const album = this.findById(id);
+    this.albums.splice(this.albums.indexOf(album), 1);
+  }
 }

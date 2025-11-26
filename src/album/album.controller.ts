@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Param, Put } from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, Put, Delete, HttpCode } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { Album } from './dto/album.dto';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -32,5 +32,12 @@ export class AlbumController {
     validateId(params.id);
     validateCreateAlbumDto(body);
     return this.albumService.update(params.id, body);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  remove(@Param() params: PathParameters): void {
+    validateId(params.id);
+    this.albumService.remove(params.id);
   }
 }
