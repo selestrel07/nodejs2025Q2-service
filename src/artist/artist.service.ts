@@ -9,11 +9,16 @@ import { TrackService } from 'src/track/track.service';
 @Injectable()
 export class ArtistService {
   private readonly artists: Artist[] = [];
+  private readonly favoriteArtists: string[] = [];
 
   constructor(private readonly albumService: AlbumService, private readonly trackService: TrackService) {}
 
   findAll(): Artist[] {
     return this.artists;
+  }
+
+  findAllFavoriteArtists(): Artist[] {
+    return this.artists.filter((artist) => this.favoriteArtists.includes(artist.id));
   }
 
   findById(id: string): Artist {

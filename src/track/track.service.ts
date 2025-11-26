@@ -7,9 +7,14 @@ import { randomUUID } from 'crypto';
 @Injectable()
 export class TrackService {
   private readonly tracks: Track[] = [];
+  private readonly favoriteTracks: string[] = [];
 
   findAll(): Track[] {
     return this.tracks;
+  }
+
+  findAllFavoriteTracks(): Track[] {
+    return this.tracks.filter((track) => this.favoriteTracks.includes(track.id));
   }
 
   findById(id: string): Track {
