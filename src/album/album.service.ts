@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Album } from './dto/album.dto';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { randomUUID } from 'crypto';
+import { throwNotFoundException } from 'src/utils/throw-exceprion';
 
 @Injectable()
 export class AlbumService {
@@ -9,6 +10,14 @@ export class AlbumService {
 
   findAll(): Album[] {
     return this.albums;
+  }
+
+  findById(id: string): Album {
+    const album = this.albums.find((a) => a.id === id);
+    if(!album) {
+      throwNotFoundException(id, 'Album');
+    }
+    return album;
   }
 
   create(createAlbumDto: CreateAlbumDto): Album {
