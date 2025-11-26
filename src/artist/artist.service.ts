@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Artist } from './dto/artist.dto';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { randomUUID } from 'crypto';
-import { throwNotFoundException } from 'src/utils/throw-exception';
+import { throwNotFoundException, throwUnprocessableEntityException } from 'src/utils/throw-exception';
 import { AlbumService } from 'src/album/album.service';
 import { TrackService } from 'src/track/track.service';
 
@@ -55,5 +55,12 @@ export class ArtistService {
     this.artists.splice(this.artists.indexOf(artist), 1);
     this.albumService.removeArtistId(id);
     this.trackService.removeArtistId(id);
+  }
+
+  addToFavorite(id: string) {
+    if (!this.artists.map((artist) => artist.id).includes(id)) {
+      throwUnprocessableEntityException(id, 'Artist');
+    }
+    this.favoriteArtists.push(id);
   }
 }

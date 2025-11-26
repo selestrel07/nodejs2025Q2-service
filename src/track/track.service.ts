@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Track } from './dto/track.dto';
-import { throwNotFoundException } from 'src/utils/throw-exception';
+import { throwNotFoundException, throwUnprocessableEntityException } from 'src/utils/throw-exception';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { randomUUID } from 'crypto';
 
@@ -65,5 +65,12 @@ export class TrackService {
     this.tracks
       .filter((track) => track.albumId === albumId)
       .forEach((track) => track.albumId = null);
+  }
+
+  addToFavorite(id: string) {
+    if (!this.tracks.map((track) => track.id).includes(id)) {
+      throwUnprocessableEntityException(id, 'Album');
+    }
+    this.favoriteTracks.push(id);
   }
 }
