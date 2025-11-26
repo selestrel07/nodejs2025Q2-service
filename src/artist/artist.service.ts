@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Artist } from './dto/artist.dto';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { randomUUID } from 'crypto';
@@ -35,10 +35,7 @@ export class ArtistService {
   }
 
   update(id: string, updateArtistDto: CreateArtistDto): Artist {
-    const artist = this.artists.find((a) => a.id === id);
-    if (!artist) {
-      throwNotFoundException(id, 'Artist');
-    }
+    const artist = this.findById(id);
     artist.name = updateArtistDto.name ?? artist.name;
     artist.grammy = updateArtistDto.grammy ?? artist.grammy;
     return artist;
@@ -46,9 +43,6 @@ export class ArtistService {
 
   remove(id: string): void {
     const artist = this.findById(id);
-    if (!artist) {
-      throwNotFoundException(id, 'Artist');
-    }
     this.artists.splice(this.artists.indexOf(artist), 1);
   }
 }

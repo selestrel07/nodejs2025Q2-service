@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { Artist } from './dto/artist.dto';
 import { PathParameters } from 'src/interfaces/path-params';
 import { validateId } from 'src/utils/validateId';
 import { CreateArtistDto } from './dto/create-artist.dto';
+import { validateCreateArtistDto } from 'src/utils/dto-validation';
 
 @Controller('artist')
 export class ArtistController {
@@ -22,15 +23,14 @@ export class ArtistController {
 
   @Post()
   create(@Body() body: CreateArtistDto) {
-    if (!('name' in body && 'grammy' in body) || !(typeof body.name === 'string' && typeof body.grammy === 'boolean')) {
-      throw new HttpException('Request body does not contain all required fields (name, grammy) or some field is empty or has wrong data type', HttpStatus.BAD_REQUEST);
-    }
+    validateCreateArtistDto(body);
     return this.artistService.create(body);
   }
 
   @Put(':id')
   update(@Body() body: CreateArtistDto, @Param() params: PathParameters) {
     validateId(params.id);
+    validateCreateArtistDto(body);
     return this.artistService.update(params.id, body);
   }
 

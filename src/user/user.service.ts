@@ -44,9 +44,6 @@ export class UserService {
 
   updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
     const user = this.getById(id);
-    if (!user) {
-      throwNotFoundException(id, 'User');
-    }
     if (user.password !== updatePasswordDto.oldPassword || updatePasswordDto.newPassword.length === 0) {
       throw new HttpException(`Wrong data was provided`, HttpStatus.FORBIDDEN);
     }
@@ -58,9 +55,6 @@ export class UserService {
 
   remove(id: string): void {
     const user = this.getById(id);
-    if (!user) {
-      throwNotFoundException(id, 'User');
-    }
     this.users.splice(this.users.indexOf(user), 1);
   }
 }

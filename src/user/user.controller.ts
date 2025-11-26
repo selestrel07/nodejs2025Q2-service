@@ -1,10 +1,11 @@
-import { Controller, Get, Param, HttpException, HttpStatus, Post, Body, Put, Delete, HttpCode } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, Delete, HttpCode } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './dto/user.dto';
 import { PathParameters } from 'src/interfaces/path-params';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/user-update-password.dto';
 import { validateId } from 'src/utils/validateId';
+import { validateCreateUserDto, validateUpdateUserPasswordDto } from 'src/utils/dto-validation';
 
 @Controller('user')
 export class UserController {
@@ -24,15 +25,14 @@ export class UserController {
 
   @Post()
   create(@Body() body: CreateUserDto): User {
-    if (!('login' in body && 'password' in body) || body.login.length === 0 || body.password.length === 0) {
-      throw new HttpException(`Request body does not contain all required fields (login, password) or some field is empty`, HttpStatus.BAD_REQUEST);
-    }
+    validateCreateUserDto(body);
     return this.userService.create(body);
   }
 
   @Put(':id')
   updatePassword(@Body() body: UpdatePasswordDto, @Param() params: PathParameters): User {
     validateId(params.id);
+    validateUpdateUserPasswordDto(body);
     return this.userService.updatePassword(params.id, body);
   }
 
