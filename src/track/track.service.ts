@@ -49,4 +49,16 @@ export class TrackService {
     const track = this.findById(id);
     this.tracks.splice(this.tracks.indexOf(track), 1);
   }
+
+  removeArtistId(artistId: string): void {
+    this.tracks
+      .filter((track) => track.artistId === artistId)
+      .forEach((track) => track.artistId = null);
+  }
+
+  removeAlbumId(albumId: string): void {
+    this.tracks
+      .filter((track) => track.albumId === albumId)
+      .forEach((track) => track.albumId = null);
+  }
 }

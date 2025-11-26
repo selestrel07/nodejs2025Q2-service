@@ -4,10 +4,13 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { randomUUID } from 'crypto';
 import { throwNotFoundException } from 'src/utils/throw-exception';
 import { isString } from 'class-validator';
+import { TrackService } from 'src/track/track.service';
 
 @Injectable()
 export class AlbumService {
   private readonly albums: Album[] = [];
+
+  constructor (private readonly trackService: TrackService) {}
 
   findAll(): Album[] {
     return this.albums;
@@ -49,5 +52,12 @@ export class AlbumService {
   remove(id: string): void {
     const album = this.findById(id);
     this.albums.splice(this.albums.indexOf(album), 1);
+    this.trackService.removeAlbumId(id);
+  }
+
+  removeArtistId(artistId: string): void {
+    this.albums
+      .filter((album) => album.artistId === artistId)
+      .forEach((album) => album.artistId = null);
   }
 }

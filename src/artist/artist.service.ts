@@ -3,10 +3,14 @@ import { Artist } from './dto/artist.dto';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { randomUUID } from 'crypto';
 import { throwNotFoundException } from 'src/utils/throw-exception';
+import { AlbumService } from 'src/album/album.service';
+import { TrackService } from 'src/track/track.service';
 
 @Injectable()
 export class ArtistService {
   private readonly artists: Artist[] = [];
+
+  constructor(private readonly albumService: AlbumService, private readonly trackService: TrackService) {}
 
   findAll(): Artist[] {
     return this.artists;
@@ -44,5 +48,7 @@ export class ArtistService {
   remove(id: string): void {
     const artist = this.findById(id);
     this.artists.splice(this.artists.indexOf(artist), 1);
+    this.albumService.removeArtistId(id);
+    this.trackService.removeArtistId(id);
   }
 }
