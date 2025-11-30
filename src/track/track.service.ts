@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Track } from './dto/track.dto';
-import { throwFavoriteNotFoundException, throwNotFoundException, throwUnprocessableEntityException } from 'src/utils/throw-exception';
+import {
+  throwFavoriteNotFoundException,
+  throwNotFoundException,
+  throwUnprocessableEntityException,
+} from 'src/utils/throw-exception';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { randomUUID } from 'crypto';
 
@@ -14,7 +18,9 @@ export class TrackService {
   }
 
   findAllFavoriteTracks(): Track[] {
-    return this.tracks.filter((track) => this.favoriteTracks.includes(track.id));
+    return this.tracks.filter((track) =>
+      this.favoriteTracks.includes(track.id),
+    );
   }
 
   findById(id: string): Track {
@@ -27,7 +33,10 @@ export class TrackService {
 
   create(createTrackDto: CreateTrackDto): Track {
     let id = '';
-    while (id.length === 0 || this.tracks.find((a) => a.id === id) !== undefined) {
+    while (
+      id.length === 0 ||
+      this.tracks.find((a) => a.id === id) !== undefined
+    ) {
       id = randomUUID();
     }
     const track = new Track({
@@ -44,7 +53,7 @@ export class TrackService {
   update(id: string, updateTrackDto: CreateTrackDto): Track {
     const track = this.findById(id);
     track.name = updateTrackDto.name ?? track.name;
-    track.artistId = updateTrackDto.artistId ?? track. artistId;
+    track.artistId = updateTrackDto.artistId ?? track.artistId;
     track.albumId = updateTrackDto.albumId ?? track.albumId;
     track.duration = updateTrackDto.duration ?? track.duration;
     return track;
@@ -61,13 +70,13 @@ export class TrackService {
   removeArtistId(artistId: string): void {
     this.tracks
       .filter((track) => track.artistId === artistId)
-      .forEach((track) => track.artistId = null);
+      .forEach((track) => (track.artistId = null));
   }
 
   removeAlbumId(albumId: string): void {
     this.tracks
       .filter((track) => track.albumId === albumId)
-      .forEach((track) => track.albumId = null);
+      .forEach((track) => (track.albumId = null));
   }
 
   addToFavorites(id: string): void {

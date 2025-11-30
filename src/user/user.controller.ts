@@ -1,11 +1,23 @@
-import { Controller, Get, Param, Post, Body, Put, Delete, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  Put,
+  Delete,
+  HttpCode,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './dto/user.dto';
 import { PathParameters } from 'src/interfaces/path-params';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/user-update-password.dto';
 import { validateId } from 'src/utils/validateId';
-import { validateCreateUserDto, validateUpdateUserPasswordDto } from 'src/utils/dto-validation';
+import {
+  validateCreateUserDto,
+  validateUpdateUserPasswordDto,
+} from 'src/utils/dto-validation';
 
 @Controller('user')
 export class UserController {
@@ -30,7 +42,10 @@ export class UserController {
   }
 
   @Put(':id')
-  updatePassword(@Body() body: UpdatePasswordDto, @Param() params: PathParameters): User {
+  updatePassword(
+    @Body() body: UpdatePasswordDto,
+    @Param() params: PathParameters,
+  ): User {
     validateId(params.id);
     validateUpdateUserPasswordDto(body);
     return this.userService.updatePassword(params.id, body);

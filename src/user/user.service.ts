@@ -23,11 +23,17 @@ export class UserService {
 
   create(userCreateDto: CreateUserDto): User {
     if (this.users.find((u) => u.login === userCreateDto.login)) {
-      throw new HttpException(`User ${userCreateDto.login} already exists`, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        `User ${userCreateDto.login} already exists`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
     let id = '';
     const timestamp = Date.now();
-    while (id.length === 0 || this.users.find((u) => u.id === id) !== undefined) {
+    while (
+      id.length === 0 ||
+      this.users.find((u) => u.id === id) !== undefined
+    ) {
       id = randomUUID();
     }
     const user: User = new User({
@@ -44,7 +50,10 @@ export class UserService {
 
   updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
     const user = this.getById(id);
-    if (user.password !== updatePasswordDto.oldPassword || updatePasswordDto.newPassword.length === 0) {
+    if (
+      user.password !== updatePasswordDto.oldPassword ||
+      updatePasswordDto.newPassword.length === 0
+    ) {
       throw new HttpException(`Wrong data was provided`, HttpStatus.FORBIDDEN);
     }
     user.password = updatePasswordDto.newPassword;

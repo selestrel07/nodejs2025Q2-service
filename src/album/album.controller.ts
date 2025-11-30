@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Param, Put, Delete, HttpCode } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Param,
+  Put,
+  Delete,
+  HttpCode,
+} from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { Album } from './dto/album.dto';
 import { CreateAlbumDto } from './dto/create-album.dto';

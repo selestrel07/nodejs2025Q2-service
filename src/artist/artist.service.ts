@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Artist } from './dto/artist.dto';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { randomUUID } from 'crypto';
-import { throwFavoriteNotFoundException, throwNotFoundException, throwUnprocessableEntityException } from 'src/utils/throw-exception';
+import {
+  throwFavoriteNotFoundException,
+  throwNotFoundException,
+  throwUnprocessableEntityException,
+} from 'src/utils/throw-exception';
 import { AlbumService } from 'src/album/album.service';
 import { TrackService } from 'src/track/track.service';
 
@@ -11,14 +15,19 @@ export class ArtistService {
   private readonly artists: Artist[] = [];
   private readonly favoriteArtists: string[] = [];
 
-  constructor(private readonly albumService: AlbumService, private readonly trackService: TrackService) {}
+  constructor(
+    private readonly albumService: AlbumService,
+    private readonly trackService: TrackService,
+  ) {}
 
   findAll(): Artist[] {
     return this.artists;
   }
 
   findAllFavoriteArtists(): Artist[] {
-    return this.artists.filter((artist) => this.favoriteArtists.includes(artist.id));
+    return this.artists.filter((artist) =>
+      this.favoriteArtists.includes(artist.id),
+    );
   }
 
   findById(id: string): Artist {
@@ -31,7 +40,10 @@ export class ArtistService {
 
   create(createArtistDto: CreateArtistDto): Artist {
     let id = '';
-    while (id.length === 0 || this.artists.find((a) => a.id === id) !== undefined) {
+    while (
+      id.length === 0 ||
+      this.artists.find((a) => a.id === id) !== undefined
+    ) {
       id = randomUUID();
     }
     const artist = new Artist({
@@ -55,7 +67,7 @@ export class ArtistService {
     this.artists.splice(this.artists.indexOf(artist), 1);
     this.albumService.removeArtistId(id);
     this.trackService.removeArtistId(id);
-    if(this.favoriteArtists.includes(id)) {
+    if (this.favoriteArtists.includes(id)) {
       this.favoriteArtists.splice(this.favoriteArtists.indexOf(id), 1);
     }
   }

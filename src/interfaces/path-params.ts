@@ -1,3 +1,3 @@
-export interface PathParameters{
+export interface PathParameters {
   id: string;
 }
