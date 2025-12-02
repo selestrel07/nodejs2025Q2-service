@@ -1,0 +1,36 @@
+services:
+  server:
+    build:
+      context: .
+    restart: on-failure
+    environment:
+      - PORT=${PORT}
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile.db
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    expose:
+      - ${DB_PORT}
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "${DB_USER}", "-d", "${DB_NAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  db-data:
