@@ -4,6 +4,7 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Docker Desctop - [Download & Install Docker Desctop](https://www.docker.com/products/docker-desktop/).
 
 ## Downloading
 
@@ -17,15 +18,12 @@ git clone https://github.com/selestrel07/nodejs2025Q2-service.git
 npm install
 ```
 
-## Running application
-
+## Running application (with Docker)
+Add .env with required parameters (Application and Database parts of .env.example)
+Then run
 ```sh
-npm start
+docker compose up -d
 ```
-
-After starting the app on port (4000 as default, you can use your own port value in `.env` file) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## Testing
 
