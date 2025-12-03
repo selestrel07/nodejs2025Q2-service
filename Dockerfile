@@ -5,4 +5,4 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 EXPOSE ${PORT}
-CMD npm run start:dev
+CMD sh -c "npx prisma generate && npx prisma migrate deploy && npm run start:dev"

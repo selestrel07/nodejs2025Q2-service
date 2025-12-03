@@ -3,14 +3,16 @@ services:
     build:
       context: .
     restart: on-failure
+    env_file: .env
     environment:
       - PORT=${PORT}
+      - DATABASE_URL=${DATABASE_URL}
     ports:
       - ${PORT}:${PORT}
     volumes:
-      - .:/usr/src/app
+      - .:/usr/src/app:cached
       - /usr/src/app/node_modules
-    command: npm run start:dev
+    command: sh -c "npx prisma generate && npx prisma migrate deploy && npm run start:dev"
     depends_on:
       db:
         condition: service_healthy
@@ -27,6 +29,8 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     expose:
       - ${DB_PORT}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "${DB_USER}", "-d", "${DB_NAME}" ]
       interval: 10s
