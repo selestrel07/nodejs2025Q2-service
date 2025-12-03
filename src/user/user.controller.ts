@@ -24,37 +24,37 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  findAll(): User[] {
-    return this.userService.findAll();
+  async findAll(): Promise<User[]> {
+    return await this.userService.findAll();
   }
 
   @Get(':id')
-  getById(@Param() params: PathParameters): User {
+  async getById(@Param() params: PathParameters): Promise<User> {
     validateId(params.id);
-    const user = this.userService.getById(params.id);
+    const user = await this.userService.getById(params.id);
     return user;
   }
 
   @Post()
-  create(@Body() body: CreateUserDto): User {
+  async create(@Body() body: CreateUserDto): Promise<User> {
     validateCreateUserDto(body);
-    return this.userService.create(body);
+    return await this.userService.create(body);
   }
 
   @Put(':id')
-  updatePassword(
+  async updatePassword(
     @Body() body: UpdatePasswordDto,
     @Param() params: PathParameters,
-  ): User {
+  ): Promise<User> {
     validateId(params.id);
     validateUpdateUserPasswordDto(body);
-    return this.userService.updatePassword(params.id, body);
+    return await this.userService.updatePassword(params.id, body);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param() params: PathParameters): void {
+  async remove(@Param() params: PathParameters): Promise<void> {
     validateId(params.id);
-    this.userService.remove(params.id);
+    await this.userService.remove(params.id);
   }
 }
