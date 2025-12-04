@@ -17,7 +17,7 @@ export class FavsController {
   async findAll(): Promise<FavsDto> {
     return {
       artists: await this.artistService.findAllFavoriteArtists(),
-      albums: this.albumService.findAllFavoriteAlbums(),
+      albums: await this.albumService.findAllFavoriteAlbums(),
       tracks: this.trackService.findAllFavoriteTracks(),
     };
   }
@@ -31,7 +31,7 @@ export class FavsController {
         break;
       }
       case 'album': {
-        this.albumService.addToFavorites(id);
+        await this.albumService.addToFavorites(id);
         break;
       }
       case 'track': {
@@ -54,7 +54,7 @@ export class FavsController {
         break;
       }
       case 'album': {
-        this.albumService.removeFromFavorites(id);
+        await this.albumService.removeFromFavorites(id);
         break;
       }
       case 'track': {
