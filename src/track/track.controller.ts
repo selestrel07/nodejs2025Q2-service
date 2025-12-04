@@ -20,33 +20,33 @@ export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
   @Get()
-  findAll(): Track[] {
-    return this.trackService.findAll();
+  async findAll(): Promise<Track[]> {
+    return await this.trackService.findAll();
   }
 
   @Get(':id')
-  findById(@Param() params: PathParameters): Track {
+  async findById(@Param() params: PathParameters): Promise<Track> {
     validateId(params.id);
-    return this.trackService.findById(params.id);
+    return await this.trackService.findById(params.id);
   }
 
   @Post()
-  create(@Body() body: CreateTrackDto): Track {
+  async create(@Body() body: CreateTrackDto): Promise<Track> {
     validateCreateTrackDto(body);
-    return this.trackService.create(body);
+    return await this.trackService.create(body);
   }
 
   @Put(':id')
-  update(@Param() params: PathParameters, @Body() body: CreateTrackDto): Track {
+  async update(@Param() params: PathParameters, @Body() body: CreateTrackDto): Promise<Track> {
     validateId(params.id);
     validateCreateTrackDto(body);
-    return this.trackService.update(params.id, body);
+    return await this.trackService.update(params.id, body);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param() params: PathParameters): void {
+  async remove(@Param() params: PathParameters): Promise<void> {
     validateId(params.id);
-    this.trackService.remove(params.id);
+    await this.trackService.remove(params.id);
   }
 }

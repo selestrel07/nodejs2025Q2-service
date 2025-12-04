@@ -18,7 +18,7 @@ export class FavsController {
     return {
       artists: await this.artistService.findAllFavoriteArtists(),
       albums: await this.albumService.findAllFavoriteAlbums(),
-      tracks: this.trackService.findAllFavoriteTracks(),
+      tracks: await this.trackService.findAllFavoriteTracks(),
     };
   }
 
@@ -35,7 +35,7 @@ export class FavsController {
         break;
       }
       case 'track': {
-        this.trackService.addToFavorites(id);
+        await this.trackService.addToFavorites(id);
         break;
       }
     }
@@ -58,7 +58,7 @@ export class FavsController {
         break;
       }
       case 'track': {
-        this.trackService.removeFromFavorites(id);
+        await this.trackService.removeFromFavorites(id);
         break;
       }
     }

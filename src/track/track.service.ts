@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Track } from './dto/track.dto';
 import {
   throwFavoriteNotFoundException,
@@ -6,90 +6,96 @@ import {
   throwUnprocessableEntityException,
 } from 'src/utils/throw-exception';
 import { CreateTrackDto } from './dto/create-track.dto';
-import { randomUUID } from 'crypto';
+import { PrismaService } from 'src/db/db.service';
+import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/client';
 
 @Injectable()
 export class TrackService {
   private readonly tracks: Track[] = [];
   private readonly favoriteTracks: string[] = [];
 
-  findAll(): Track[] {
-    return this.tracks;
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async findAll(): Promise<Track[]> {
+    return await this.prismaService.track.findMany();
   }
 
-  findAllFavoriteTracks(): Track[] {
-    return this.tracks.filter((track) =>
-      this.favoriteTracks.includes(track.id),
-    );
+  async findAllFavoriteTracks(): Promise<Track[]> {
+    return (await this.prismaService.favoriteTrack.findMany({
+      include: { track: true },
+    })).map((track) => track.track);
   }
 
-  findById(id: string): Track {
-    const track = this.tracks.find((t) => t.id === id);
+  async findById(id: string): Promise<Track> {
+    const track = await this.prismaService.track.findUnique({
+      where: { id },
+    });
     if (!track) {
       throwNotFoundException(id, 'Track');
     }
     return track;
   }
 
-  create(createTrackDto: CreateTrackDto): Track {
-    let id = '';
-    while (
-      id.length === 0 ||
-      this.tracks.find((a) => a.id === id) !== undefined
-    ) {
-      id = randomUUID();
-    }
-    const track = new Track({
-      id,
-      name: createTrackDto.name,
-      artistId: createTrackDto.artistId ?? null,
-      albumId: createTrackDto.albumId ?? null,
-      duration: createTrackDto.duration,
-    });
-    this.tracks.push(track);
-    return track;
-  }
-
-  update(id: string, updateTrackDto: CreateTrackDto): Track {
-    const track = this.findById(id);
-    track.name = updateTrackDto.name ?? track.name;
-    track.artistId = updateTrackDto.artistId ?? track.artistId;
-    track.albumId = updateTrackDto.albumId ?? track.albumId;
-    track.duration = updateTrackDto.duration ?? track.duration;
-    return track;
-  }
-
-  remove(id: string): void {
-    const track = this.findById(id);
-    this.tracks.splice(this.tracks.indexOf(track), 1);
-    if (this.favoriteTracks.includes(id)) {
-      this.favoriteTracks.splice(this.favoriteTracks.indexOf(id), 1);
+  async create(createTrackDto: CreateTrackDto): Promise<Track> {
+    try {
+      return await this.prismaService.track.create({
+        data: createTrackDto,
+        select: { id: true, name: true, duration: true, artistId: true, albumId: true },
+      });
+    } catch {
+      throw new HttpException(
+        `Check your data: artist or album with provided id doesn't exist in the database`,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
   }
 
-  removeArtistId(artistId: string): void {
-    this.tracks
-      .filter((track) => track.artistId === artistId)
-      .forEach((track) => (track.artistId = null));
-  }
-
-  removeAlbumId(albumId: string): void {
-    this.tracks
-      .filter((track) => track.albumId === albumId)
-      .forEach((track) => (track.albumId = null));
-  }
-
-  addToFavorites(id: string): void {
-    if (!this.tracks.map((track) => track.id).includes(id)) {
-      throwUnprocessableEntityException(id, 'Album');
+  async update(id: string, updateTrackDto: CreateTrackDto): Promise<Track> {
+    try {
+      return await this.prismaService.track.update({
+        data: updateTrackDto,
+        where: { id },
+        select: { id: true, name: true, duration: true, artistId: true, albumId: true },
+      });
+    } catch (e) {
+      if (e instanceof PrismaClientValidationError || (e instanceof PrismaClientKnownRequestError && e.code === 'P2003')) {
+        throw new HttpException(
+          `Check your data: artist or album with provided id doesn't exist in the database`,
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      } else {
+        throwNotFoundException(id, 'Track');
+      }
     }
-    this.favoriteTracks.push(id);
   }
 
-  removeFromFavorites(id: string): void {
-    if (!this.favoriteTracks.includes(id)) {
-      throwFavoriteNotFoundException(id, 'Track');
+  async remove(id: string): Promise<void> {
+    try {
+      await this.prismaService.track.delete({
+        where: { id },
+      });
+    } catch {
+      throwNotFoundException(id, 'Track');
     }
-    this.favoriteTracks.splice(this.favoriteTracks.indexOf(id), 1);
+  }
+
+  async addToFavorites(trackId: string): Promise<void> {
+    try {
+      await this.prismaService.favoriteTrack.create({
+        data: { trackId },
+      });
+    } catch {
+      throwUnprocessableEntityException(trackId, 'Track');
+    }
+  }
+
+  async removeFromFavorites(trackId: string): Promise<void> {
+    try {
+      await this.prismaService.favoriteTrack.delete({
+        where: { trackId },
+      });
+    } catch {
+      throwFavoriteNotFoundException(trackId, 'Track');
+    }
   }
 }
