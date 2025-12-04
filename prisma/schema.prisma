@@ -15,3 +15,16 @@ model User {
   createdAt  BigInt? @default(dbgenerated("(EXTRACT(EPOCH FROM NOW()) * 1000)::bigint"))
   updatedAt  BigInt? @default(dbgenerated("(EXTRACT(EPOCH FROM NOW()) * 1000)::bigint"))
 }
+
+model Artist {
+  id         String  @id @default(uuid())
+  name       String
+  grammy     Boolean
+  favorites  FavoriteArtist[]
+}
+
+model FavoriteArtist {
+  id         String  @id @default(uuid())
+  artistId   String  @unique
+  artist     Artist  @relation(fields: [artistId], references: [id])
+}
