@@ -21,32 +21,32 @@ export class ArtistController {
 
   @Get()
   async findAll(): Promise<Artist[]> {
-    return this.artistService.findAll();
+    return await this.artistService.findAll();
   }
 
   @Get(':id')
   async findById(@Param() params: PathParameters): Promise<Artist> {
     validateId(params.id);
-    return this.artistService.findById(params.id);
+    return await this.artistService.findById(params.id);
   }
 
   @Post()
   async create(@Body() body: CreateArtistDto): Promise<Artist> {
     validateCreateArtistDto(body);
-    return this.artistService.create(body);
+    return await this.artistService.create(body);
   }
 
   @Put(':id')
   async update(@Body() body: CreateArtistDto, @Param() params: PathParameters): Promise<Artist> {
     validateId(params.id);
     validateCreateArtistDto(body);
-    return this.artistService.update(params.id, body);
+    return await this.artistService.update(params.id, body);
   }
 
   @Delete(':id')
   @HttpCode(204)
   async remove(@Param() params: PathParameters): Promise<void> {
     validateId(params.id);
-    this.artistService.remove(params.id);
+    await this.artistService.remove(params.id);
   }
 }

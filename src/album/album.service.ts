@@ -69,7 +69,7 @@ export class AlbumService {
 
   async remove(id: string): Promise<void> {
     try {
-      this.prismaService.album.delete({
+      await this.prismaService.album.delete({
         where: { id },
       });
     } catch {
@@ -91,7 +91,7 @@ export class AlbumService {
     try {
       await this.prismaService.favoriteAlbum.delete({
         where: { albumId },
-      })
+      });
     } catch {
       throwFavoriteNotFoundException(albumId, 'Album');
     }
