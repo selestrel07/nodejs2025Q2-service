@@ -21,10 +21,26 @@ model Artist {
   name       String
   grammy     Boolean
   favorites  FavoriteArtist[]
+  albums     Album[]
 }
 
 model FavoriteArtist {
   id         String  @id @default(uuid())
   artistId   String  @unique
   artist     Artist  @relation(fields: [artistId], references: [id])
+}
+
+model Album {
+  id         String  @id @default(uuid())
+  name       String
+  year       Int
+  artistId   String?
+  artist     Artist? @relation(fields: [artistId], references: [id], onDelete: SetNull)
+  favorites  FavoriteAlbum[]
+}
+
+model FavoriteAlbum {
+  id         String  @id @default(uuid())
+  albumId    String  @unique
+  album      Album   @relation(fields: [albumId], references: [id])
 }
