@@ -14,20 +14,20 @@ export class FavsController {
   ) {}
 
   @Get()
-  findAll(): FavsDto {
+  async findAll(): Promise<FavsDto> {
     return {
-      artists: this.artistService.findAllFavoriteArtists(),
+      artists: await this.artistService.findAllFavoriteArtists(),
       albums: this.albumService.findAllFavoriteAlbums(),
       tracks: this.trackService.findAllFavoriteTracks(),
     };
   }
 
   @Post(':type(artist|album|track)/:id')
-  addToFavorites(@Param('id') id: string, @Param('type') type: string): void {
+  async addToFavorites(@Param('id') id: string, @Param('type') type: string): Promise<void> {
     validateId(id);
     switch (type) {
       case 'artist': {
-        this.artistService.addToFavorites(id);
+        await this.artistService.addToFavorites(id);
         break;
       }
       case 'album': {
@@ -43,14 +43,14 @@ export class FavsController {
 
   @Delete(':type(artist|album|track)/:id')
   @HttpCode(204)
-  removeFromFavorites(
+  async removeFromFavorites(
     @Param('id') id: string,
     @Param('type') type: string,
-  ): void {
+  ): Promise<void> {
     validateId(id);
     switch (type) {
       case 'artist': {
-        this.artistService.removeFromFavorites(id);
+        await this.artistService.removeFromFavorites(id);
         break;
       }
       case 'album': {

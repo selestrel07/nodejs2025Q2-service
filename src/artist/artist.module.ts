@@ -3,9 +3,10 @@ import { ArtistService } from './artist.service';
 import { ArtistController } from './artist.controller';
 import { AlbumModule } from 'src/album/album.module';
 import { TrackModule } from 'src/track/track.module';
+import { PrismaModule } from 'src/db/db.module';
 
 @Module({
-  imports: [AlbumModule, TrackModule],
+  imports: [AlbumModule, TrackModule, PrismaModule],
   controllers: [ArtistController],
   providers: [ArtistService],
   exports: [ArtistService],

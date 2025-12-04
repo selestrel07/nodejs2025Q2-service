@@ -20,24 +20,24 @@ export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
   @Get()
-  findAll(): Artist[] {
+  async findAll(): Promise<Artist[]> {
     return this.artistService.findAll();
   }
 
   @Get(':id')
-  findById(@Param() params: PathParameters) {
+  async findById(@Param() params: PathParameters): Promise<Artist> {
     validateId(params.id);
     return this.artistService.findById(params.id);
   }
 
   @Post()
-  create(@Body() body: CreateArtistDto) {
+  async create(@Body() body: CreateArtistDto): Promise<Artist> {
     validateCreateArtistDto(body);
     return this.artistService.create(body);
   }
 
   @Put(':id')
-  update(@Body() body: CreateArtistDto, @Param() params: PathParameters) {
+  async update(@Body() body: CreateArtistDto, @Param() params: PathParameters): Promise<Artist> {
     validateId(params.id);
     validateCreateArtistDto(body);
     return this.artistService.update(params.id, body);
@@ -45,7 +45,7 @@ export class ArtistController {
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param() params: PathParameters) {
+  async remove(@Param() params: PathParameters): Promise<void> {
     validateId(params.id);
     this.artistService.remove(params.id);
   }
