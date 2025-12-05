@@ -7,6 +7,5 @@ import { PrismaModule } from 'src/db/db.module';
   imports: [PrismaModule],
   controllers: [TrackController],
   providers: [TrackService],
-  exports: [TrackService],
 })
 export class TrackModule {}

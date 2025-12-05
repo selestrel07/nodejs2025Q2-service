@@ -2,17 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Artist } from './dto/artist.dto';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { throwNotFoundException } from 'src/utils/throw-exception';
-import { AlbumService } from 'src/album/album.service';
-import { TrackService } from 'src/track/track.service';
 import { PrismaService } from 'src/db/db.service';
 
 @Injectable()
 export class ArtistService {
-  constructor(
-    private readonly albumService: AlbumService,
-    private readonly trackService: TrackService,
-    private readonly prismaService: PrismaService,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async findAll(): Promise<Artist[]> {
     return await this.prismaService.artist.findMany();

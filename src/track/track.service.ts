@@ -10,9 +10,6 @@ import {
 
 @Injectable()
 export class TrackService {
-  private readonly tracks: Track[] = [];
-  private readonly favoriteTracks: string[] = [];
-
   constructor(private readonly prismaService: PrismaService) {}
 
   async findAll(): Promise<Track[]> {
