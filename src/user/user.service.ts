@@ -7,10 +7,12 @@ import { PrismaService } from 'src/db/db.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaService: PrismaService){}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async findAll(): Promise<User[]> {
-    return (await this.prismaService.user.findMany()).map((user) => new User(user));
+    return (await this.prismaService.user.findMany()).map(
+      (user) => new User(user),
+    );
   }
 
   async getById(id: string): Promise<User> {
@@ -26,7 +28,9 @@ export class UserService {
   }
 
   async create(userCreateDto: CreateUserDto): Promise<User> {
-    if ((await this.findAll()).find((user) => user.login === userCreateDto.login)) {
+    if (
+      (await this.findAll()).find((user) => user.login === userCreateDto.login)
+    ) {
       throw new HttpException(
         `User ${userCreateDto.login} already exists`,
         HttpStatus.BAD_REQUEST,
@@ -34,12 +38,22 @@ export class UserService {
     }
     const user: User = await this.prismaService.user.create({
       data: userCreateDto,
-      select: { id: true, login: true, password: true, version: true, createdAt: true, updatedAt: true },
+      select: {
+        id: true,
+        login: true,
+        password: true,
+        version: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
     return new User(user);
   }
 
-  async updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): Promise<User> {
+  async updatePassword(
+    id: string,
+    updatePasswordDto: UpdatePasswordDto,
+  ): Promise<User> {
     let user = await this.getById(id);
     if (
       user.password !== updatePasswordDto.oldPassword ||
@@ -56,13 +70,19 @@ export class UserService {
         version: user.version + 1,
         updatedAt: BigInt(Date.now()),
       },
-      select: { id: true, login: true, password: true, version: true, createdAt: true, updatedAt: true },
+      select: {
+        id: true,
+        login: true,
+        password: true,
+        version: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
     return new User(user);
   }
 
   async remove(id: string): Promise<void> {
-    const user = await this.getById(id);
     await this.prismaService.user.delete({
       where: {
         id,

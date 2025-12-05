@@ -37,7 +37,10 @@ export class TrackController {
   }
 
   @Put(':id')
-  async update(@Param() params: PathParameters, @Body() body: CreateTrackDto): Promise<Track> {
+  async update(
+    @Param() params: PathParameters,
+    @Body() body: CreateTrackDto,
+  ): Promise<Track> {
     validateId(params.id);
     validateCreateTrackDto(body);
     return await this.trackService.update(params.id, body);

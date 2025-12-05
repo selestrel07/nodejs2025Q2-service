@@ -37,7 +37,10 @@ export class AlbumController {
   }
 
   @Put(':id')
-  async update(@Param() params: PathParameters, @Body() body: CreateAlbumDto): Promise<Album> {
+  async update(
+    @Param() params: PathParameters,
+    @Body() body: CreateAlbumDto,
+  ): Promise<Album> {
     validateId(params.id);
     validateCreateAlbumDto(body);
     return await this.albumService.update(params.id, body);

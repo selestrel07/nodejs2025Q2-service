@@ -23,11 +23,13 @@ export class ArtistService {
   }
 
   async findAllFavoriteArtists(): Promise<Artist[]> {
-    return (await this.prismaService.favoriteArtist.findMany({
-      include: {
-        artist: true
-      }
-    })).map((artist) => artist.artist);
+    return (
+      await this.prismaService.favoriteArtist.findMany({
+        include: {
+          artist: true,
+        },
+      })
+    ).map((artist) => artist.artist);
   }
 
   async findById(id: string): Promise<Artist> {
@@ -69,7 +71,7 @@ export class ArtistService {
     try {
       await this.prismaService.artist.delete({
         where: {
-          id
+          id,
         },
       });
     } catch {

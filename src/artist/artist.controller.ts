@@ -37,7 +37,10 @@ export class ArtistController {
   }
 
   @Put(':id')
-  async update(@Body() body: CreateArtistDto, @Param() params: PathParameters): Promise<Artist> {
+  async update(
+    @Body() body: CreateArtistDto,
+    @Param() params: PathParameters,
+  ): Promise<Artist> {
     validateId(params.id);
     validateCreateArtistDto(body);
     return await this.artistService.update(params.id, body);

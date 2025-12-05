@@ -23,7 +23,10 @@ export class FavsController {
   }
 
   @Post(':type(artist|album|track)/:id')
-  async addToFavorites(@Param('id') id: string, @Param('type') type: string): Promise<void> {
+  async addToFavorites(
+    @Param('id') id: string,
+    @Param('type') type: string,
+  ): Promise<void> {
     validateId(id);
     switch (type) {
       case 'artist': {

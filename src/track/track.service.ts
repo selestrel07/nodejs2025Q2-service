@@ -7,7 +7,10 @@ import {
 } from 'src/utils/throw-exception';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { PrismaService } from 'src/db/db.service';
-import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/client';
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/client';
 
 @Injectable()
 export class TrackService {
@@ -21,9 +24,11 @@ export class TrackService {
   }
 
   async findAllFavoriteTracks(): Promise<Track[]> {
-    return (await this.prismaService.favoriteTrack.findMany({
-      include: { track: true },
-    })).map((track) => track.track);
+    return (
+      await this.prismaService.favoriteTrack.findMany({
+        include: { track: true },
+      })
+    ).map((track) => track.track);
   }
 
   async findById(id: string): Promise<Track> {
@@ -40,7 +45,13 @@ export class TrackService {
     try {
       return await this.prismaService.track.create({
         data: createTrackDto,
-        select: { id: true, name: true, duration: true, artistId: true, albumId: true },
+        select: {
+          id: true,
+          name: true,
+          duration: true,
+          artistId: true,
+          albumId: true,
+        },
       });
     } catch {
       throw new HttpException(
@@ -55,10 +66,19 @@ export class TrackService {
       return await this.prismaService.track.update({
         data: updateTrackDto,
         where: { id },
-        select: { id: true, name: true, duration: true, artistId: true, albumId: true },
+        select: {
+          id: true,
+          name: true,
+          duration: true,
+          artistId: true,
+          albumId: true,
+        },
       });
     } catch (e) {
-      if (e instanceof PrismaClientValidationError || (e instanceof PrismaClientKnownRequestError && e.code === 'P2003')) {
+      if (
+        e instanceof PrismaClientValidationError ||
+        (e instanceof PrismaClientKnownRequestError && e.code === 'P2003')
+      ) {
         throw new HttpException(
           `Check your data: artist or album with provided id doesn't exist in the database`,
           HttpStatus.UNPROCESSABLE_ENTITY,

@@ -7,7 +7,10 @@ import {
   throwUnprocessableEntityException,
 } from 'src/utils/throw-exception';
 import { PrismaService } from 'src/db/db.service';
-import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/client';
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/client';
 
 @Injectable()
 export class AlbumService {
@@ -18,11 +21,13 @@ export class AlbumService {
   }
 
   async findAllFavoriteAlbums(): Promise<Album[]> {
-    return (await this.prismaService.favoriteAlbum.findMany({
-      include: {
-        album: true,
-      },
-    })).map((album) => album.album);
+    return (
+      await this.prismaService.favoriteAlbum.findMany({
+        include: {
+          album: true,
+        },
+      })
+    ).map((album) => album.album);
   }
 
   async findById(id: string): Promise<Album> {
@@ -59,7 +64,10 @@ export class AlbumService {
       });
       return album;
     } catch (e: unknown) {
-      if (e instanceof PrismaClientValidationError || (e instanceof PrismaClientKnownRequestError && e.code === 'P2003')) {
+      if (
+        e instanceof PrismaClientValidationError ||
+        (e instanceof PrismaClientKnownRequestError && e.code === 'P2003')
+      ) {
         throwUnprocessableEntityException(updateAlbumDto.artistId, 'Artist');
       } else {
         throwNotFoundException(id, 'Album');

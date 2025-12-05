@@ -6,8 +6,8 @@ export class User {
   @Exclude()
   password: string;
   version: number;
-  createdAt: BigInt;
-  updatedAt: BigInt;
+  createdAt: bigint;
+  updatedAt: bigint;
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
