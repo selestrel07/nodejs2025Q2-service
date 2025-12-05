@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Artist } from './dto/artist.dto';
 import { CreateArtistDto } from './dto/create-artist.dto';
-import {
-  throwFavoriteNotFoundException,
-  throwNotFoundException,
-  throwUnprocessableEntityException,
-} from 'src/utils/throw-exception';
+import { throwNotFoundException } from 'src/utils/throw-exception';
 import { AlbumService } from 'src/album/album.service';
 import { TrackService } from 'src/track/track.service';
 import { PrismaService } from 'src/db/db.service';
@@ -20,16 +16,6 @@ export class ArtistService {
 
   async findAll(): Promise<Artist[]> {
     return await this.prismaService.artist.findMany();
-  }
-
-  async findAllFavoriteArtists(): Promise<Artist[]> {
-    return (
-      await this.prismaService.favoriteArtist.findMany({
-        include: {
-          artist: true,
-        },
-      })
-    ).map((artist) => artist.artist);
   }
 
   async findById(id: string): Promise<Artist> {
@@ -76,30 +62,6 @@ export class ArtistService {
       });
     } catch {
       throwNotFoundException(id, 'Artist');
-    }
-  }
-
-  async addToFavorites(artistId: string): Promise<void> {
-    try {
-      await this.prismaService.favoriteArtist.create({
-        data: {
-          artistId,
-        },
-      });
-    } catch {
-      throwUnprocessableEntityException(artistId, 'Artist');
-    }
-  }
-
-  async removeFromFavorites(artistId: string): Promise<void> {
-    try {
-      await this.prismaService.favoriteArtist.delete({
-        where: {
-          artistId,
-        },
-      });
-    } catch {
-      throwFavoriteNotFoundException(artistId, 'Artist');
     }
   }
 }

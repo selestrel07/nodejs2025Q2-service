@@ -1,10 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Track } from './dto/track.dto';
-import {
-  throwFavoriteNotFoundException,
-  throwNotFoundException,
-  throwUnprocessableEntityException,
-} from 'src/utils/throw-exception';
+import { throwNotFoundException } from 'src/utils/throw-exception';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { PrismaService } from 'src/db/db.service';
 import {
@@ -21,14 +17,6 @@ export class TrackService {
 
   async findAll(): Promise<Track[]> {
     return await this.prismaService.track.findMany();
-  }
-
-  async findAllFavoriteTracks(): Promise<Track[]> {
-    return (
-      await this.prismaService.favoriteTrack.findMany({
-        include: { track: true },
-      })
-    ).map((track) => track.track);
   }
 
   async findById(id: string): Promise<Track> {
@@ -96,26 +84,6 @@ export class TrackService {
       });
     } catch {
       throwNotFoundException(id, 'Track');
-    }
-  }
-
-  async addToFavorites(trackId: string): Promise<void> {
-    try {
-      await this.prismaService.favoriteTrack.create({
-        data: { trackId },
-      });
-    } catch {
-      throwUnprocessableEntityException(trackId, 'Track');
-    }
-  }
-
-  async removeFromFavorites(trackId: string): Promise<void> {
-    try {
-      await this.prismaService.favoriteTrack.delete({
-        where: { trackId },
-      });
-    } catch {
-      throwFavoriteNotFoundException(trackId, 'Track');
     }
   }
 }

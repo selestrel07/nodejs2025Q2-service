@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Album } from './dto/album.dto';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import {
-  throwFavoriteNotFoundException,
   throwNotFoundException,
   throwUnprocessableEntityException,
 } from 'src/utils/throw-exception';
@@ -18,16 +17,6 @@ export class AlbumService {
 
   async findAll(): Promise<Album[]> {
     return await this.prismaService.album.findMany();
-  }
-
-  async findAllFavoriteAlbums(): Promise<Album[]> {
-    return (
-      await this.prismaService.favoriteAlbum.findMany({
-        include: {
-          album: true,
-        },
-      })
-    ).map((album) => album.album);
   }
 
   async findById(id: string): Promise<Album> {
@@ -82,26 +71,6 @@ export class AlbumService {
       });
     } catch {
       throwNotFoundException(id, 'Album');
-    }
-  }
-
-  async addToFavorites(albumId: string): Promise<void> {
-    try {
-      await this.prismaService.favoriteAlbum.create({
-        data: { albumId },
-      });
-    } catch {
-      throwUnprocessableEntityException(albumId, 'Album');
-    }
-  }
-
-  async removeFromFavorites(albumId: string): Promise<void> {
-    try {
-      await this.prismaService.favoriteAlbum.delete({
-        where: { albumId },
-      });
-    } catch {
-      throwFavoriteNotFoundException(albumId, 'Album');
     }
   }
 }
