@@ -1,69 +1,96 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { randomUUID } from 'crypto';
 import { UpdatePasswordDto } from './dto/user-update-password.dto';
 import { throwNotFoundException } from 'src/utils/throw-exception';
+import { PrismaService } from 'src/db/db.service';
 
 @Injectable()
 export class UserService {
-  private readonly users: User[] = [];
+  constructor(private readonly prismaService: PrismaService) {}
 
-  findAll(): User[] {
-    return this.users;
+  async findAll(): Promise<User[]> {
+    return (await this.prismaService.user.findMany()).map(
+      (user) => new User(user),
+    );
   }
 
-  getById(id: string): User {
-    const user = this.users.find((u) => u.id === id);
+  async getById(id: string): Promise<User> {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id,
+      },
+    });
     if (!user) {
       throwNotFoundException(id, 'User');
     }
-    return user;
+    return new User(user);
   }
 
-  create(userCreateDto: CreateUserDto): User {
-    if (this.users.find((u) => u.login === userCreateDto.login)) {
+  async create(userCreateDto: CreateUserDto): Promise<User> {
+    if (
+      (await this.findAll()).find((user) => user.login === userCreateDto.login)
+    ) {
       throw new HttpException(
         `User ${userCreateDto.login} already exists`,
         HttpStatus.BAD_REQUEST,
       );
     }
-    let id = '';
-    const timestamp = Date.now();
-    while (
-      id.length === 0 ||
-      this.users.find((u) => u.id === id) !== undefined
-    ) {
-      id = randomUUID();
-    }
-    const user: User = new User({
-      id,
-      login: userCreateDto.login,
-      password: userCreateDto.password,
-      version: 1,
-      createdAt: timestamp,
-      updatedAt: timestamp,
+    const user: User = await this.prismaService.user.create({
+      data: userCreateDto,
+      select: {
+        id: true,
+        login: true,
+        password: true,
+        version: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
-    this.users.push(user);
-    return user;
+    return new User(user);
   }
 
-  updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
-    const user = this.getById(id);
+  async updatePassword(
+    id: string,
+    updatePasswordDto: UpdatePasswordDto,
+  ): Promise<User> {
+    let user = await this.getById(id);
     if (
       user.password !== updatePasswordDto.oldPassword ||
       updatePasswordDto.newPassword.length === 0
     ) {
       throw new HttpException(`Wrong data was provided`, HttpStatus.FORBIDDEN);
     }
-    user.password = updatePasswordDto.newPassword;
-    user.version = user.version + 1;
-    user.updatedAt = Date.now();
-    return user;
+    user = await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        password: updatePasswordDto.newPassword,
+        version: user.version + 1,
+        updatedAt: BigInt(Date.now()),
+      },
+      select: {
+        id: true,
+        login: true,
+        password: true,
+        version: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    return new User(user);
   }
 
-  remove(id: string): void {
-    const user = this.getById(id);
-    this.users.splice(this.users.indexOf(user), 1);
+  async remove(id: string): Promise<void> {
+    try {
+      await this.prismaService.user.delete({
+        where: {
+          id,
+        },
+      });
+    } catch {
+      throwNotFoundException(id, 'User');
+    }
   }
 }

@@ -1,66 +1,33 @@
 import { Controller, Get, Post, HttpCode, Param, Delete } from '@nestjs/common';
-import { ArtistService } from 'src/artist/artist.service';
-import { AlbumService } from 'src/album/album.service';
-import { TrackService } from 'src/track/track.service';
 import { FavsDto } from './dto/favs.dto';
 import { validateId } from 'src/utils/validateId';
+import { FavsService } from './favs.service';
 
 @Controller('favs')
 export class FavsController {
-  constructor(
-    private readonly artistService: ArtistService,
-    private readonly albumService: AlbumService,
-    private readonly trackService: TrackService,
-  ) {}
+  constructor(private readonly favsService: FavsService) {}
 
   @Get()
-  findAll(): FavsDto {
-    return {
-      artists: this.artistService.findAllFavoriteArtists(),
-      albums: this.albumService.findAllFavoriteAlbums(),
-      tracks: this.trackService.findAllFavoriteTracks(),
-    };
+  async findAll(): Promise<FavsDto> {
+    return await this.favsService.findAll();
   }
 
   @Post(':type(artist|album|track)/:id')
-  addToFavorites(@Param('id') id: string, @Param('type') type: string): void {
+  async addToFavorites(
+    @Param('id') id: string,
+    @Param('type') type: string,
+  ): Promise<void> {
     validateId(id);
-    switch (type) {
-      case 'artist': {
-        this.artistService.addToFavorites(id);
-        break;
-      }
-      case 'album': {
-        this.albumService.addToFavorites(id);
-        break;
-      }
-      case 'track': {
-        this.trackService.addToFavorites(id);
-        break;
-      }
-    }
+    await this.favsService.createFavorite(type, id);
   }
 
   @Delete(':type(artist|album|track)/:id')
   @HttpCode(204)
-  removeFromFavorites(
+  async removeFromFavorites(
     @Param('id') id: string,
     @Param('type') type: string,
-  ): void {
+  ): Promise<void> {
     validateId(id);
-    switch (type) {
-      case 'artist': {
-        this.artistService.removeFromFavorites(id);
-        break;
-      }
-      case 'album': {
-        this.albumService.removeFromFavorites(id);
-        break;
-      }
-      case 'track': {
-        this.trackService.removeFromFavorites(id);
-        break;
-      }
-    }
+    await this.favsService.removeFavorite(type, id);
   }
 }
