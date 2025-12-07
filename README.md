@@ -22,7 +22,7 @@ npm install
 Add .env with required parameters (Application and Database parts of .env.example)
 Then run
 ```sh
-docker compose up -d
+npm run start:docker
 ```
 
 ## Testing
