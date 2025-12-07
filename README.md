@@ -25,6 +25,11 @@ Then run
 npm run start:docker
 ```
 
+## Scanning image for vulnerabilities (using docker scout - DockerDesctop must be installed)
+```sh
+npm run docker:scan
+```
+
 ## Testing
 
 After application running open new terminal and enter:
