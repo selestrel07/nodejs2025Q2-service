@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './dto/user.dto';
@@ -52,7 +53,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param() params: PathParameters): Promise<void> {
     validateId(params.id);
     await this.userService.remove(params.id);

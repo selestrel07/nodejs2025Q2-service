@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { Album } from './dto/album.dto';
@@ -47,7 +48,7 @@ export class AlbumController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param() params: PathParameters): Promise<void> {
     validateId(params.id);
     await this.albumService.remove(params.id);

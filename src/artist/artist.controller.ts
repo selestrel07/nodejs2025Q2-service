@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  HttpStatus
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { Artist } from './dto/artist.dto';
@@ -47,7 +48,7 @@ export class ArtistController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param() params: PathParameters): Promise<void> {
     validateId(params.id);
     await this.artistService.remove(params.id);
