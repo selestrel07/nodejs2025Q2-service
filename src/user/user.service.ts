@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/user-update-password.dto';
@@ -25,6 +25,13 @@ export class UserService {
     if (!user) {
       throwNotFoundException(id, 'User');
     }
+    return new User(user);
+  }
+
+  async getByLogin(login: string): Promise<User> {
+    const user = await this.prismaService.user.findUnique({
+      where: { login, },
+    });
     return new User(user);
   }
 
