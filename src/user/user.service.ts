@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/user-update-password.dto';
 import { throwNotFoundException } from 'src/utils/throw-exception';
 import { PrismaService } from 'src/db/db.service';
+import { hash, verify } from 'argon2';
 
 @Injectable()
 export class UserService {
@@ -36,8 +37,12 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    const data = {
+      ...userCreateDto,
+      password: await hash(userCreateDto.password),
+    }
     const user: User = await this.prismaService.user.create({
-      data: userCreateDto,
+      data,
       select: {
         id: true,
         login: true,
@@ -56,7 +61,7 @@ export class UserService {
   ): Promise<User> {
     let user = await this.getById(id);
     if (
-      user.password !== updatePasswordDto.oldPassword ||
+      !(await verify(user.password, updatePasswordDto.oldPassword)) ||
       updatePasswordDto.newPassword.length === 0
     ) {
       throw new HttpException(`Wrong data was provided`, HttpStatus.FORBIDDEN);
@@ -66,7 +71,7 @@ export class UserService {
         id,
       },
       data: {
-        password: updatePasswordDto.newPassword,
+        password: await hash(updatePasswordDto.newPassword),
         version: user.version + 1,
         updatedAt: BigInt(Date.now()),
       },
@@ -92,5 +97,13 @@ export class UserService {
     } catch {
       throwNotFoundException(id, 'User');
     }
+  }
+
+  async hash(value: string): Promise<string> {
+    return await hash(value);
+  }
+
+  async verify(hash: string, value: string): Promise<boolean> {
+    return await verify(hash, value);
   }
 }
