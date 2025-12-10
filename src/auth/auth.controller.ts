@@ -31,6 +31,8 @@ export class AuthController {
     if (!user.password || !(await this.userService.verify(user.password, body.password))) {
       throw new ForbiddenException('Wrong credentials were provided');
     }
-    return await this.authService.generateTokens(user);
+    const response = await this.authService.generateTokens(user);
+    await this.userService.updateRefreshToken(user, response.tokens.refresh.token);
+    return response;
   }
 }

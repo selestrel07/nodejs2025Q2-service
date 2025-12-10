@@ -57,6 +57,7 @@ export class UserService {
         version: true,
         createdAt: true,
         updatedAt: true,
+        refreshToken: true,
       },
     });
     return new User(user);
@@ -89,9 +90,19 @@ export class UserService {
         version: true,
         createdAt: true,
         updatedAt: true,
+        refreshToken: true
       },
     });
     return new User(user);
+  }
+
+  async updateRefreshToken(user: User, refreshToken: string): Promise<void> {
+    await this.prismaService.user.update({
+      where: { id: user.id },
+      data: {
+        refreshToken: await this.hash(refreshToken),
+      },
+    });
   }
 
   async remove(id: string): Promise<void> {

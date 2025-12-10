@@ -8,6 +8,8 @@ export class User {
   version: number;
   createdAt: bigint;
   updatedAt: bigint;
+  @Exclude()
+  refreshToken: string;
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
