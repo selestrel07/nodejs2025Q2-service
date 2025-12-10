@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { TokenResponse } from './dto/token-response.dto';
 import { User } from 'src/user/dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { Payload } from './interfaces/token-payload';
 
 @Injectable()
 export class AuthService {
@@ -35,6 +36,19 @@ export class AuthService {
           expires: new Date(this.jwtService.decode(refreshToken).exp * 1000).toLocaleString()
         },
       }
+    }
+  }
+
+  async verifyToken(token: string, isRefresh: boolean = false): Promise<Payload> {
+    try {
+      return await this.jwtService.verifyAsync(token, {
+        secret: isRefresh ? process.env.JWT_SECRET_REFRESH_KEY : process.env.JWT_SECRET_KEY
+      });
+    } catch (e) {
+      if (e instanceof Error && e.name === 'TokenExpiredError') {
+        throw new ForbiddenException(`${isRefresh ? 'Refresh' : 'Access'} token is expired`);
+      }
+      throw new ForbiddenException(`${isRefresh ? 'Refresh' : 'Access'} token is invalid`);
     }
   }
 }
