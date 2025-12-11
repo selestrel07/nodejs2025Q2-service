@@ -1,4 +1,4 @@
-import { Body, Controller, ForbiddenException, Headers, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Headers, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from 'src/user/user.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
@@ -8,6 +8,7 @@ import { TokenResponse } from './dto/token-response.dto';
 import { StatusCodes } from 'http-status-codes';
 import { RefreshTokensDto } from './dto/refresh-token.dto';
 import { JwtService } from '@nestjs/jwt';
+import { AuthGuard } from '../guard/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -38,6 +39,7 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @UseGuards(AuthGuard)
   @HttpCode(StatusCodes.OK)
   async refreshTokens(@Headers('authorization') authHeader: string, @Body() body: RefreshTokensDto): Promise<TokenResponse> {
     validateRefreshTokensDto(body);

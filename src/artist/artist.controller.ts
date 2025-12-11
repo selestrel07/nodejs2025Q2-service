@@ -7,7 +7,8 @@ import {
   Param,
   Post,
   Put,
-  HttpStatus
+  HttpStatus,
+  UseGuards
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { Artist } from './dto/artist.dto';
@@ -15,8 +16,10 @@ import { PathParameters } from 'src/interfaces/path-params';
 import { validateId } from 'src/utils/validateId';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { validateCreateArtistDto } from 'src/utils/dto-validation';
+import { AuthGuard } from 'src/guard/auth.guard';
 
 @Controller('artist')
+@UseGuards(AuthGuard)
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 

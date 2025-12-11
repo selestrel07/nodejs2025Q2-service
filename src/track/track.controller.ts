@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { Track } from './dto/track.dto';
@@ -15,8 +16,10 @@ import { PathParameters } from 'src/interfaces/path-params';
 import { validateId } from 'src/utils/validateId';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { validateCreateTrackDto } from 'src/utils/dto-validation';
+import { AuthGuard } from 'src/guard/auth.guard';
 
 @Controller('track')
+@UseGuards(AuthGuard)
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 

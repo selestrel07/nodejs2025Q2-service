@@ -1,9 +1,11 @@
-import { Controller, Get, Post, HttpCode, Param, Delete, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, HttpCode, Param, Delete, HttpStatus, UseGuards } from '@nestjs/common';
 import { FavsDto } from './dto/favs.dto';
 import { validateId } from 'src/utils/validateId';
 import { FavsService } from './favs.service';
+import { AuthGuard } from 'src/guard/auth.guard';
 
 @Controller('favs')
+@UseGuards(AuthGuard)
 export class FavsController {
   constructor(private readonly favsService: FavsService) {}
 

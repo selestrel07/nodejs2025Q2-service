@@ -5,6 +5,7 @@ import { TrackModule } from './track/track.module';
 import { AlbumModule } from './album/album.module';
 import { FavsModule } from './favs/favs.module';
 import { AuthModule } from './auth/auth.module';
+import { GuardModule } from './guard/guard.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
     AlbumModule,
     FavsModule,
     AuthModule,
+    GuardModule,
   ],
 })
 export class AppModule {}
