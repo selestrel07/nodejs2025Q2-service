@@ -22,7 +22,7 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   async signUp(@Body() body: CreateUserDto): Promise<User> {
     validateCreateUserDto(body);
-    return this.userService.create(body);
+    return await this.userService.create(body);
   }
 
   @Post('login')
@@ -34,7 +34,7 @@ export class AuthController {
       throw new ForbiddenException('Wrong credentials were provided');
     }
     const response = await this.authService.generateTokens(user);
-    await this.userService.updateRefreshToken(user, response.tokens.refresh.token);
+    await this.userService.updateRefreshToken(user, response.refreshToken);
     return response;
   }
 
@@ -53,7 +53,7 @@ export class AuthController {
       throw new ForbiddenException('Refresh token is invalid');
     }
     const response = await this.authService.generateTokens(user);
-    await this.userService.updateRefreshToken(user, response.tokens.refresh.token);
+    await this.userService.updateRefreshToken(user, response.refreshToken);
     return response;
   }
 }

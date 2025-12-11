@@ -26,16 +26,8 @@ export class AuthService {
 
     return {
       user,
-      tokens: {
-        access: {
-          token: accessToken,
-          expires: new Date(this.jwtService.decode(accessToken).exp * 1000).toLocaleString(),
-        },
-        refresh: {
-          token: refreshToken,
-          expires: new Date(this.jwtService.decode(refreshToken).exp * 1000).toLocaleString()
-        },
-      }
+      accessToken,
+      refreshToken,
     }
   }
 
