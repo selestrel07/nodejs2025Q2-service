@@ -1,6 +1,6 @@
 import { ConsoleLogger, Injectable, LogLevel } from "@nestjs/common";
 import { join } from 'node:path';
-import { mkdirSync, appendFileSync } from "node:fs";
+import { mkdirSync, appendFileSync, existsSync, statSync } from "node:fs";
 
 @Injectable()
 export class AppLogger extends ConsoleLogger {
@@ -12,11 +12,31 @@ export class AppLogger extends ConsoleLogger {
     super(context, { logLevels });
     this.logFilePath = join(process.cwd(), 'logs', `app-${new Date().toISOString()}.log`);
     this.errorLogFilePath = join(process.cwd(), 'logs', `app-${new Date().toISOString()}-error.log`);
-    this.maxFileSize = parseInt(process.env.MAX_LOG_SIZE ?? '50');
+    this.maxFileSize = parseInt(process.env.MAX_LOG_SIZE ?? '50') * 1024; //kB
     mkdirSync(join(process.cwd(), 'logs'), { recursive: true });
   }
 
+  private rotateFileIfNeed() {
+    try {
+      if (existsSync(this.logFilePath)) {
+        const stats = statSync(this.logFilePath);
+        if (stats.size >= this.maxFileSize) {
+          this.logFilePath = join(process.cwd(), 'logs', `app-${new Date().toISOString()}.log`);
+        }
+      }
+      if (existsSync(this.errorLogFilePath)) {
+        const stats = statSync(this.errorLogFilePath);
+        if (stats.size >= this.maxFileSize) {
+          this.logFilePath = join(process.cwd(), 'logs', `app-${new Date().toISOString()}-error.log`);
+        }
+      }
+    } catch (err) {
+      super.error('Failed to rotate log file', err);
+    }
+  }
+
   private writeToFile(filePath, message: unknown) {
+    this.rotateFileIfNeed();
     const timestamp = new Date().toISOString();
     appendFileSync(filePath, `[${timestamp}] ${message}\n`);
   }
