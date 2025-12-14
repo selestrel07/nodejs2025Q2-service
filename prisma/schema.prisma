@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id         String  @id @default(uuid())
-  login      String  @unique
-  password   String
-  version    Int     @default(1)
-  createdAt  BigInt? @default(dbgenerated("(EXTRACT(EPOCH FROM NOW()) * 1000)::bigint"))
-  updatedAt  BigInt? @default(dbgenerated("(EXTRACT(EPOCH FROM NOW()) * 1000)::bigint"))
+  id           String  @id @default(uuid())
+  login        String  @unique
+  password     String
+  version      Int     @default(1)
+  createdAt    BigInt? @default(dbgenerated("(EXTRACT(EPOCH FROM NOW()) * 1000)::bigint"))
+  updatedAt    BigInt? @default(dbgenerated("(EXTRACT(EPOCH FROM NOW()) * 1000)::bigint"))
+  refreshToken String?
 }
 
 model Artist {

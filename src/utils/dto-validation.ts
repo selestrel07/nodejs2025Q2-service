@@ -5,6 +5,8 @@ import { throwDtoBadRequestException } from './throw-exception';
 import { CreateTrackDto } from 'src/track/dto/create-track.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UpdatePasswordDto } from 'src/user/dto/user-update-password.dto';
+import { RefreshTokensDto } from 'src/auth/dto/refresh-token.dto';
+import { UnauthorizedException } from '@nestjs/common';
 
 export const validateCreateAlbumDto = (
   createAlbumDto: CreateAlbumDto,
@@ -84,3 +86,9 @@ export const validateUpdateUserPasswordDto = (
     throwDtoBadRequestException(['login', 'password']);
   }
 };
+
+export const validateRefreshTokensDto = (refreshTokensDto: RefreshTokensDto): void => {
+  if (!('refreshToken' in refreshTokensDto) || !(typeof refreshTokensDto.refreshToken === 'string' && refreshTokensDto.refreshToken.length !== 0)) {
+    throw new UnauthorizedException('Wrong data was provided');
+  }
+}

@@ -7,6 +7,8 @@ import {
   Put,
   Delete,
   HttpCode,
+  HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { Album } from './dto/album.dto';
@@ -14,8 +16,10 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { PathParameters } from 'src/interfaces/path-params';
 import { validateId } from 'src/utils/validateId';
 import { validateCreateAlbumDto } from 'src/utils/dto-validation';
+import { AuthGuard } from 'src/guard/auth.guard';
 
 @Controller('album')
+@UseGuards(AuthGuard)
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
@@ -47,7 +51,7 @@ export class AlbumController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param() params: PathParameters): Promise<void> {
     validateId(params.id);
     await this.albumService.remove(params.id);

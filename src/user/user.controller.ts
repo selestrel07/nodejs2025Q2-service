@@ -7,6 +7,8 @@ import {
   Put,
   Delete,
   HttpCode,
+  HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './dto/user.dto';
@@ -18,8 +20,10 @@ import {
   validateCreateUserDto,
   validateUpdateUserPasswordDto,
 } from 'src/utils/dto-validation';
+import { AuthGuard } from 'src/guard/auth.guard';
 
 @Controller('user')
+@UseGuards(AuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -52,7 +56,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param() params: PathParameters): Promise<void> {
     validateId(params.id);
     await this.userService.remove(params.id);
