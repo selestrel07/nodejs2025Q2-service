@@ -53,7 +53,8 @@ export class AppLogger extends ConsoleLogger {
 
   error(message: unknown, stack?: unknown, context?: unknown): void {
     super.error(message, stack, context);
-    this.writeToFile(this.errorLogFilePath, message);
-    this.writeToFile(this.logFilePath, message);
+    const text = typeof message === 'string' ? message : JSON.stringify(message);
+    this.writeToFile(this.errorLogFilePath, `${text}${stack ? `\n${stack}` : ''}`);
+    this.writeToFile(this.logFilePath, `${text}${stack ? `\n${stack}` : ''}`);
   }
 }
