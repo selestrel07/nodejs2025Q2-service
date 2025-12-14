@@ -4,6 +4,7 @@ import 'dotenv/config';
 import { BigIntInterceptor } from './utils/bigint-interceptor';
 import { AppLogger } from './log/app.logger';
 import { AppExceptionFilter } from './exception.filter';
+import { useProcessErrorHandlers } from './utils/process-error-handlers';
 
 async function bootstrap() {
   const logger = new AppLogger();
@@ -13,6 +14,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(new AppExceptionFilter(logger));
   app.useGlobalInterceptors(new BigIntInterceptor(app.get(Reflector)));
+  useProcessErrorHandlers(logger);
   await app.listen(process.env.PORT ?? 4000);
 }
 bootstrap();
